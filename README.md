@@ -7,7 +7,7 @@ Jednoduchá webová aplikace vytvořená jako semestrální práce. Slouží k a
 
 [**Otevřít webovou aplikaci**](https://vase-webovka.cz)
 
-## �️ Použité technologie
+## Použité technologie
 
 *   **Backend:** PHP (bez frameworku)
 *   **Frontend:** HTML5, CSS3, JavaScript
