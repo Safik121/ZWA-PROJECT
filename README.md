@@ -6,7 +6,7 @@
 
 Jednoduchá webová aplikace vytvořená jako semestrální práce. Slouží k agregaci a zobrazování aktuálních trendů ze světa zábavy (filmy, hudba, knihy, anime).
 
-[**Otevřít webovou aplikaci**](https://vase-webovka.cz)
+[**Otevřít webovou aplikaci**]([https://vase-webovka.cz](https://zwa.toad.cz/~zoglocha/myvibe))
 
 ## Použité technologie
 
