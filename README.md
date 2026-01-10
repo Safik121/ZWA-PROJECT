@@ -1,6 +1,7 @@
 # MyVibe
 
 **Autor:** Charles
+
 **Typ projektu:** Semestrální projekt
 
 Jednoduchá webová aplikace vytvořená jako semestrální práce. Slouží k agregaci a zobrazování aktuálních trendů ze světa zábavy (filmy, hudba, knihy, anime).
