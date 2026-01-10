@@ -5,9 +5,9 @@
 
 A simple web application created as a semester project. It aggregates and displays current trends from the world of entertainment (movies, music, books, anime).
 
-[🌐 **Open Web Application**](https://zwa.toad.cz/~zoglocha/myvibe)
+[**Open Web Application**](https://zwa.toad.cz/~zoglocha/myvibe)
 
-## 🛠️ Technologies Used
+## Technologies Used
 
 *   **Backend:** PHP (no framework)
 *   **Frontend:** HTML5, CSS3, JavaScript
