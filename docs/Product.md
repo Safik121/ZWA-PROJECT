@@ -64,7 +64,6 @@ Inside a collection, you can add items in two ways:
 Your public profile showcases your identity and collections.
 *   **Bio**: Write a short bio about yourself (editable).
 *   **Recent Collections**: Displays your 3 most recent collections.
-*   **Share**: You can share your profile URL with friends so they can see your collections.
 
 ### Search
 Find other users to see what they are collecting.
