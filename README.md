@@ -1,23 +1,21 @@
 # MyVibe
 
-**Autor:** Charles
+**Author:** Charles
+**Project Type:** Semester Project
 
-**Typ projektu:** Semestrální projekt
+A simple web application created as a semester project. It aggregates and displays current trends from the world of entertainment (movies, music, books, anime).
 
-Jednoduchá webová aplikace vytvořená jako semestrální práce. Slouží k agregaci a zobrazování aktuálních trendů ze světa zábavy (filmy, hudba, knihy, anime).
+[🌐 **Open Web Application**](https://zwa.toad.cz/~zoglocha/myvibe)
 
-[**Otevřít webovou aplikaci**]([https://vase-webovka.cz](https://zwa.toad.cz/~zoglocha/myvibe))
+## 🛠️ Technologies Used
 
-## Použité technologie
-
-*   **Backend:** PHP (bez frameworku)
+*   **Backend:** PHP (no framework)
 *   **Frontend:** HTML5, CSS3, JavaScript
-*   **Externí API:**
+*   **External APIs:**
     *   Jikan API (Anime)
-    *   The Movie Database (Filmy)
-    *   iTunes API (Hudba)
-    *   Google Books API (Knihy)
-    *   RAWG API (Hry)
-    *   Spoonacular API (Recepty)
-    
+    *   The Movie Database (Movies)
+    *   iTunes API (Music)
+    *   Google Books API (Books)
+    *   RAWG API (Games)
+    *   Spoonacular API (Recipes)
 *   **Data:** JSON caching, Session storage
