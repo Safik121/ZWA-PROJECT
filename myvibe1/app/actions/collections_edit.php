@@ -104,16 +104,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $fileName = 'collection_' . uniqid('', true) . '.' . $allowed[$mime];
 
                 $newCoverPath = $userDir . $fileName;
+                $absolutePath = __DIR__ . '/../../' . $newCoverPath;
 
-                move_uploaded_file($file['tmp_name'], $newCoverPath);
+                if (move_uploaded_file($file['tmp_name'], $absolutePath)) {
+                    @chmod($absolutePath, 0777);
+                } else {
+                    $_SESSION['msg_error'] = 'Failed to upload image. Check server permissions.';
+                    header('Location: ../../collections.php');
+                    exit;
+                }
 
                 // Pokud měla kolekce starý manuální obrázek – smažeme ho
                 if (
                     !empty($collection['cover']) &&
                     $collection['cover'] !== getDefaultImage('collection') &&
-                    file_exists($collection['cover'])
+                    file_exists(__DIR__ . '/../../' . $collection['cover'])
                 ) {
-                    unlink($collection['cover']);
+                    unlink(__DIR__ . '/../../' . $collection['cover']);
                 }
 
             } else {
