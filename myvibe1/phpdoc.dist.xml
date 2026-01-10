@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpdocumentor configVersion="3">
+    <title>MyVibe1</title>
+    
+    <paths>
+        <output>docs/api_reference</output>
+        <cache>cache/phpdoc</cache>
+    </paths>
+
+    <version number="1.0.0">
+        <api>
+            <source dsn=".">
+                <path>.</path>
+            </source>
+            <ignore>
+                <path>vendor</path>
+                <path>docs</path>
+                <path>cache</path>
+                <path>.git</path>
+            </ignore>
+        </api>
+    </version>
+</phpdocumentor>

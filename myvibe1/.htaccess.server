@@ -1,0 +1,8 @@
+# MyVibe - Apache Configuration (SERVER VERSION)
+# Disable directory listing
+Options -Indexes
+
+# Error handling - SERVER PATHS
+ErrorDocument 404 /~zoglocha/myvibe/error.php?code=404
+ErrorDocument 403 /~zoglocha/myvibe/error.php?code=403
+ErrorDocument 500 /~zoglocha/myvibe/error.php?code=500

@@ -1,0 +1,8 @@
+# MyVibe - Apache Configuration (LOCALHOST VERSION)
+# Disable directory listing
+Options -Indexes
+
+# Error handling - LOCALHOST PATHS
+ErrorDocument 404 /myvibe1/error.php?code=404
+ErrorDocument 403 /myvibe1/error.php?code=403
+ErrorDocument 500 /myvibe1/error.php?code=500
