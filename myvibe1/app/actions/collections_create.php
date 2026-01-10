@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $absolutePath = __DIR__ . '/../../' . $coverPath;
 
                 if (@move_uploaded_file($file['tmp_name'], $absolutePath)) {
-                    // Success
+                    @chmod($absolutePath, 0777);
                 } else {
                     $_SESSION['msg_error'] = 'Failed to save image. Check server permissions for "uploads" folder.';
                     header('Location: ../../collections.php');
