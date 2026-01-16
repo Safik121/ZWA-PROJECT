@@ -120,8 +120,8 @@
     <div id="detailModal" class="modal modal-detail">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h2 id="modalTitle"></h2>
-            <img id="modalImage" alt="">
+            <h2 id="modalTitle">&nbsp;</h2>
+            <img id="modalImage" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="">
             <p id="modalDescription"></p>
         </div>
     </div>
