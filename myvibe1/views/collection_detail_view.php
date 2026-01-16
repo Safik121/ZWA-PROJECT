@@ -126,7 +126,8 @@ $isOwner = !empty($data['isOwner']) || (!empty($_SESSION['role']) && $_SESSION['
     <?php endif; ?>
 
 
-    <section class="item-grid">
+    <div class="item-grid">
+      <h2 style="display:none">Items</h2>
 
       <?php if ($isOwner): ?>
         <!-- 8a. Manuální přidání itemu -->
@@ -159,6 +160,7 @@ $isOwner = !empty($data['isOwner']) || (!empty($_SESSION['role']) && $_SESSION['
           </div>
         <?php endif; ?>
       <?php endif; ?>
+
 
       <!-- 8c. Existující položky -->
       <?php if (!empty($data['items'])): ?>
@@ -194,7 +196,7 @@ $isOwner = !empty($data['isOwner']) || (!empty($_SESSION['role']) && $_SESSION['
           </div>
         <?php endforeach; ?>
       <?php endif; ?>
-    </section>
+    </div>
 
     <!-- ====================================================== -->
     <!-- 9. DETAIL MODAL PRO VŠECHNY -->
@@ -202,14 +204,12 @@ $isOwner = !empty($data['isOwner']) || (!empty($_SESSION['role']) && $_SESSION['
     <div id="detailModal" class="modal modal-detail">
       <div class="modal-content">
         <span class="close">&times;</span>
-        <h2 id="modalTitle"></h2>
-        <img id="modalImage" alt="">
+        <h2 id="modalTitle">&nbsp;</h2>
+        <img id="modalImage" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="">
         <p id="modalDescription"></p>
       </div>
     </div>
 
-    <!-- ====================================================== -->
-    <!-- 10. MODALY PRO OWNERA/ADMINA -->
     <!-- ====================================================== -->
     <?php if ($isOwner): ?>
 
