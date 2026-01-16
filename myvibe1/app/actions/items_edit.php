@@ -114,11 +114,91 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $filePath = $userDir . $newName; // Relative for DB
                 $absolutePath = $absoluteDir . $newName; // Absolute for move_uploaded_file
 
-                if (@move_uploaded_file($file['tmp_name'], $absolutePath)) {
-                    @chmod($absolutePath, 0777);
-                    $imagePath = $filePath;
+                // Zpracování a uložení obrázku pomocí nativního GD
+                $srcPath = $file['tmp_name'];
+                $destPath = $absolutePath;
+                $maxWidth = 1000;
+                $quality = 80;
+
+                list($width, $height, $type) = getimagesize($srcPath);
+                $srcImg = null;
+
+                switch ($type) {
+                    case IMAGETYPE_JPEG:
+                        $srcImg = imagecreatefromjpeg($srcPath);
+                        break;
+                    case IMAGETYPE_PNG:
+                        $srcImg = imagecreatefrompng($srcPath);
+                        break;
+                    case IMAGETYPE_WEBP:
+                        $srcImg = imagecreatefromwebp($srcPath);
+                        break;
+                }
+
+                if ($srcImg) {
+                    // Výpočet nových rozměrů (Scale)
+                    $newWidth = $width;
+                    $newHeight = $height;
+
+                    if ($width > $maxWidth) {
+                        $ratio = $height / $width;
+                        $newWidth = $maxWidth;
+                        $newHeight = round($maxWidth * $ratio);
+                    }
+
+                    // Vytvoření nového plátna
+                    $destImg = imagecreatetruecolor($newWidth, $newHeight);
+
+                    // Zachování průhlednosti
+                    if ($type == IMAGETYPE_PNG || $type == IMAGETYPE_WEBP) {
+                        imagealphablending($destImg, false);
+                        imagesavealpha($destImg, true);
+                        $transparent = imagecolorallocatealpha($destImg, 255, 255, 255, 127);
+                        imagefilledrectangle($destImg, 0, 0, $newWidth, $newHeight, $transparent);
+                    }
+
+                    // Změna velikosti
+                    imagecopyresampled(
+                        $destImg,
+                        $srcImg,
+                        0,
+                        0,
+                        0,
+                        0,
+                        $newWidth,
+                        $newHeight,
+                        $width,
+                        $height
+                    );
+
+                    // Uložení
+                    $saved = false;
+                    switch ($type) {
+                        case IMAGETYPE_JPEG:
+                            $saved = imagejpeg($destImg, $destPath, $quality);
+                            break;
+                        case IMAGETYPE_PNG:
+                            $saved = imagepng($destImg, $destPath);
+                            break;
+                        case IMAGETYPE_WEBP:
+                            $saved = imagewebp($destImg, $destPath, $quality);
+                            break;
+                    }
+
+                    imagedestroy($srcImg);
+                    imagedestroy($destImg);
+
+                    if ($saved) {
+                        @chmod($absolutePath, 0777);
+                        $imagePath = $filePath;
+                    } else {
+                        $_SESSION['msg_error'] = 'Failed to save image (GD error).';
+                        header("Location: " . ($_SERVER['HTTP_REFERER'] ?? '../../index.php'));
+                        exit;
+                    }
+
                 } else {
-                    $_SESSION['msg_error'] = 'Failed to upload image. Check server permissions.';
+                    $_SESSION['msg_error'] = 'Unsupported image type or GD error.';
                     header("Location: " . ($_SERVER['HTTP_REFERER'] ?? '../../index.php'));
                     exit;
                 }
