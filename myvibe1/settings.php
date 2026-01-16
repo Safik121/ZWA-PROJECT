@@ -180,16 +180,95 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'updat
             }
 
             // Pokus o nahrání souboru
-            if (@move_uploaded_file($file['tmp_name'], $filePath)) {
-                @chmod($filePath, 0777);
+            $srcPath = $file['tmp_name'];
+            $destPath = $filePath;
+            $targetSize = 500;
+            $quality = 80;
 
-                // Update DB pouze pokud se upload zdařil
-                $stmt = $pdo->prepare('UPDATE users SET avatar = ? WHERE id = ?');
-                $stmt->execute([$filePath, $userId]);
-                $success = 'Profile picture updated.';
+            // Zjištění typu a rozměrů
+            list($width, $height, $type) = getimagesize($srcPath);
+            $srcImg = null;
+
+            switch ($type) {
+                case IMAGETYPE_JPEG:
+                    $srcImg = imagecreatefromjpeg($srcPath);
+                    break;
+                case IMAGETYPE_PNG:
+                    $srcImg = imagecreatefrompng($srcPath);
+                    break;
+                case IMAGETYPE_WEBP:
+                    $srcImg = imagecreatefromwebp($srcPath);
+                    break;
+            }
+
+            if ($srcImg) {
+                // Výpočet ořezu na střed (Cover)
+                $ratio = $width / $height;
+                $srcX = 0;
+                $srcY = 0;
+                $srcW = $width;
+                $srcH = $height;
+
+                if ($ratio > 1) { // Širší než vyšší
+                    $srcW = $height;
+                    $srcX = ($width - $height) / 2;
+                } else { // Vyšší než širší
+                    $srcH = $width;
+                    $srcY = ($height - $width) / 2;
+                }
+
+                // Vytvoření nového plátna
+                $destImg = imagecreatetruecolor($targetSize, $targetSize);
+
+                // Zachování průhlednosti
+                if ($type == IMAGETYPE_PNG || $type == IMAGETYPE_WEBP) {
+                    imagealphablending($destImg, false);
+                    imagesavealpha($destImg, true);
+                    $transparent = imagecolorallocatealpha($destImg, 255, 255, 255, 127);
+                    imagefilledrectangle($destImg, 0, 0, $targetSize, $targetSize, $transparent);
+                }
+
+                // Změna velikosti s ořezem
+                imagecopyresampled(
+                    $destImg,
+                    $srcImg,
+                    0,
+                    0,
+                    $srcX,
+                    $srcY,
+                    $targetSize,
+                    $targetSize,
+                    $srcW,
+                    $srcH
+                );
+
+                // Uložení
+                $saved = false;
+                switch ($type) {
+                    case IMAGETYPE_JPEG:
+                        $saved = imagejpeg($destImg, $destPath, $quality);
+                        break;
+                    case IMAGETYPE_PNG:
+                        $saved = imagepng($destImg, $destPath);
+                        break;
+                    case IMAGETYPE_WEBP:
+                        $saved = imagewebp($destImg, $destPath, $quality);
+                        break;
+                }
+
+                imagedestroy($srcImg);
+                imagedestroy($destImg);
+
+                if ($saved) {
+                    $stmt = $pdo->prepare('UPDATE users SET avatar = ? WHERE id = ?');
+                    $stmt->execute([$filePath, $userId]);
+                    $success = 'Profile picture updated (compressed).';
+                } else {
+                    $error = 'Failed to save image (GD error).';
+                }
 
             } else {
-                $error = 'Failed to save image. Check server permissions for "uploads" folder.';
+                $error = 'Unsupported image type or GD error.';
             }
         } else {
             $error = 'Only JPG, PNG, or WEBP are allowed.';
