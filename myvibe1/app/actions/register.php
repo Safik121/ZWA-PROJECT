@@ -130,11 +130,93 @@ if (!empty($_FILES['avatar']['name'])) {
         $fileName = 'avatar_' . uniqid() . '.' . $extension;
         $targetPath = $uploadDir . $fileName;
 
-        if (move_uploaded_file($file['tmp_name'], $targetPath)) {
-            chmod($targetPath, 0777);
-            $avatarPath = 'uploads/' . $safeUsername . '/avatar/' . $fileName;
+        // Zpracování a uložení obrázku pomocí nativního GD
+        $srcPath = $file['tmp_name'];
+        $destPath = $targetPath;
+        $targetSize = 500;
+        $quality = 80;
+
+        list($width, $height, $type) = getimagesize($srcPath);
+        $srcImg = null;
+
+        switch ($type) {
+            case IMAGETYPE_JPEG:
+                $srcImg = imagecreatefromjpeg($srcPath);
+                break;
+            case IMAGETYPE_PNG:
+                $srcImg = imagecreatefrompng($srcPath);
+                break;
+            case IMAGETYPE_WEBP:
+                $srcImg = imagecreatefromwebp($srcPath);
+                break;
+        }
+
+        if ($srcImg) {
+            // Výpočet ořezu na střed (Cover)
+            $ratio = $width / $height;
+            $srcX = 0;
+            $srcY = 0;
+            $srcW = $width;
+            $srcH = $height;
+
+            if ($ratio > 1) { // Širší než vyšší
+                $srcW = $height;
+                $srcX = ($width - $height) / 2;
+            } else { // Vyšší než širší
+                $srcH = $width;
+                $srcY = ($height - $width) / 2;
+            }
+
+            // Vytvoření nového plátna
+            $destImg = imagecreatetruecolor($targetSize, $targetSize);
+
+            // Zachování průhlednosti
+            if ($type == IMAGETYPE_PNG || $type == IMAGETYPE_WEBP) {
+                imagealphablending($destImg, false);
+                imagesavealpha($destImg, true);
+                $transparent = imagecolorallocatealpha($destImg, 255, 255, 255, 127);
+                imagefilledrectangle($destImg, 0, 0, $targetSize, $targetSize, $transparent);
+            }
+
+            // Změna velikosti s ořezem
+            imagecopyresampled(
+                $destImg,
+                $srcImg,
+                0,
+                0,
+                $srcX,
+                $srcY,
+                $targetSize,
+                $targetSize,
+                $srcW,
+                $srcH
+            );
+
+            // Uložení
+            $saved = false;
+            switch ($type) {
+                case IMAGETYPE_JPEG:
+                    $saved = imagejpeg($destImg, $destPath, $quality);
+                    break;
+                case IMAGETYPE_PNG:
+                    $saved = imagepng($destImg, $destPath);
+                    break;
+                case IMAGETYPE_WEBP:
+                    $saved = imagewebp($destImg, $destPath, $quality);
+                    break;
+            }
+
+            imagedestroy($srcImg);
+            imagedestroy($destImg);
+
+            if ($saved) {
+                $avatarPath = 'uploads/' . $safeUsername . '/avatar/' . $fileName;
+            } else {
+                $errors[] = 'Failed to save image (GD error).';
+            }
+
         } else {
-            $errors[] = 'Failed to save uploaded image.';
+            $errors[] = 'Unsupported image type or GD error.';
         }
     }
 }
